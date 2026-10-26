@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#12345a">
+<title>Garments Buyer Order Handling</title>
+<style>
+:root{--navy:#12345a;--blue:#2563eb;--bg:#f3f6fb;--ink:#172033;--muted:#667085;--line:#e1e7f0;--white:#fff;--green:#087f5b;--amber:#a15c00;--red:#b42318}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,"Noto Sans Bengali",Arial,sans-serif;background:var(--bg);color:var(--ink)}
+header{background:var(--navy);color:#fff;padding:18px 16px}header .wrap{max-width:1200px;margin:auto;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.brand{font-size:20px;font-weight:800}.sub{font-size:12px;opacity:.8;margin-top:3px}.lang{border:1px solid #ffffff66;background:transparent;color:#fff;padding:8px 10px;border-radius:9px}
+main{max-width:1200px;margin:18px auto;padding:0 14px 30px}.notice{background:#fff8e6;border:1px solid #f1d18a;color:#744b00;border-radius:12px;padding:12px 14px;font-size:13px;margin-bottom:14px}
+.panel,.stat{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:0 2px 8px #182b4408}
+.grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin:14px 0}.stat .label{font-size:12px;color:var(--muted)}.stat .num{font-size:27px;font-weight:800;margin-top:5px}
+.tabs{display:flex;gap:8px;overflow:auto;padding:4px 0 12px}.tab{white-space:nowrap;border:1px solid var(--line);background:#fff;border-radius:10px;padding:10px 13px;font-weight:650;color:#344054}.tab.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+.panel{margin-bottom:14px}.panel h2{font-size:18px;margin:0 0 14px}.formgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+label{display:block;font-size:12px;font-weight:700;color:#475467;margin-bottom:5px}input,select,textarea{width:100%;border:1px solid #cfd8e5;border-radius:9px;padding:10px 11px;font:inherit;background:#fff;color:var(--ink);min-height:42px}textarea{min-height:76px;resize:vertical}
+button{border:0;border-radius:9px;padding:10px 14px;background:var(--blue);color:#fff;font:inherit;font-weight:700;cursor:pointer}button.secondary{background:#edf2f8;color:#24364b}button.danger{background:#b42318}button:disabled{opacity:.5;cursor:not-allowed}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.toolbar input{max-width:340px}.tablewrap{overflow:auto;border:1px solid var(--line);border-radius:10px}table{width:100%;border-collapse:collapse;min-width:900px;background:#fff}th,td{text-align:left;padding:10px;border-bottom:1px solid var(--line);font-size:13px;vertical-align:top}th{background:#f8fafc;color:#475467;position:sticky;top:0}tr:last-child td{border-bottom:0}.pill{display:inline-block;border-radius:999px;padding:4px 8px;background:#e8f1ff;color:#1849a9;font-size:11px;font-weight:800}.muted{color:var(--muted);font-size:13px}.hidden{display:none!important}.statusmsg{margin-top:10px;font-size:13px;white-space:pre-wrap}.ok{color:var(--green)}.err{color:var(--red)}.reportbox{background:#f8fafc;border-radius:10px;padding:12px;margin-top:10px;white-space:pre-wrap}.dash-filters{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:12px 0}.dash-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:12px 0}.dash-kpi{border:1px solid var(--line);border-radius:12px;padding:13px;background:#fff}.dash-kpi .big{font-size:24px;font-weight:800;margin-top:4px}.bartrack{height:8px;background:#e8edf4;border-radius:99px;overflow:hidden;margin-top:6px}.barfill{height:100%;background:#2563eb}.report-filters{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:12px 0}.report-actions{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}.report-table{min-width:760px}.footer{text-align:center;color:var(--muted);font-size:12px;padding:12px}
+@media(max-width:850px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.formgrid{grid-template-columns:repeat(2,minmax(0,1fr))}.dash-filters{grid-template-columns:repeat(2,minmax(0,1fr))}.dash-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){.dash-filters{grid-template-columns:1fr 1fr}.dash-kpis{grid-template-columns:1fr 1fr}.report-filters{grid-template-columns:1fr 1fr}header .wrap{align-items:flex-start}.brand{font-size:17px}.grid{gap:8px}.stat{padding:12px}.stat .num{font-size:23px}.formgrid{grid-template-columns:1fr}.panel{padding:12px}main{padding:0 10px 24px}}
+@media print{body{background:#fff;color:#000}header,.notice,.grid,.tabs,#ordersView,#productionView,#qualityView,#shipmentView,#signoutMain,.footer,.no-print{display:none!important}main{max-width:none;margin:0;padding:0}.panel{border:0;box-shadow:none;padding:0}.reportbox{background:#fff;padding:0}.tablewrap{overflow:visible;border:0}table{min-width:0;width:100%;font-size:10px}th,td{font-size:10px;padding:5px;position:static}#reportView{display:block!important}#dashboardView{display:block!important}.report-title{display:block!important}}
+</style>
+</head>
+<body>
+<header><div class="wrap"><div><div class="brand" id="appTitle">Garments Buyer Order Handling</div><div class="sub" id="appSub">Buyer Order • Production • Quality • Shipment</div></div><div><button class="lang" id="langBtn">বাংলা / English</button></div></div></header>
+<main>
+<div class="notice">Offline mode / অফলাইন মোড: ডেটা এই ব্রাউজার ও ডিভাইসেই সেভ হবে। নিয়মিত CSV Export করে ব্যাকআপ রাখুন।</div>
+<section id="appSection" class="hidden">
+<div class="grid">
+<div class="stat"><div class="label" data-en="Total Orders" data-bn="মোট অর্ডার">মোট অর্ডার</div><div class="num" id="totalCount">0</div></div>
+<div class="stat"><div class="label" data-en="In Production" data-bn="প্রোডাকশনে">প্রোডাকশনে</div><div class="num" id="productionCount">0</div></div>
+<div class="stat"><div class="label" data-en="Quality Check" data-bn="কোয়ালিটি চেক">কোয়ালিটি চেক</div><div class="num" id="qualityCount">0</div></div>
+<div class="stat"><div class="label" data-en="Shipment Ready" data-bn="শিপমেন্ট প্রস্তুত">শিপমেন্ট প্রস্তুত</div><div class="num" id="readyCount">0</div></div>
+<div class="stat"><div class="label" data-en="Shipped" data-bn="শিপড">শিপড</div><div class="num" id="shippedCount">0</div></div>
+</div>
+<nav class="tabs">
+<button class="tab active" data-tab="dashboard" data-en="Dashboard" data-bn="ড্যাশবোর্ড">ড্যাশবোর্ড</button>
+<button class="tab" data-tab="orders" data-en="Buyer Orders" data-bn="বায়ার অর্ডার">বায়ার অর্ডার</button>
+<button class="tab" data-tab="production" data-en="Production" data-bn="প্রোডাকশন">প্রোডাকশন</button>
+<button class="tab" data-tab="quality" data-en="Quality & Inspection" data-bn="কোয়ালিটি ও ইনস্পেকশন">কোয়ালিটি ও ইনস্পেকশন</button>
+<button class="tab" data-tab="shipment" data-en="Shipment" data-bn="শিপমেন্ট">শিপমেন্ট</button>
+<button class="tab" data-tab="report" data-en="Daily Report" data-bn="দৈনিক রিপোর্ট">দৈনিক রিপোর্ট</button>
+</nav>
+<div id="dashboardView" class="panel">
+<h2>Dashboard / ড্যাশবোর্ড</h2>
+<p class="muted">Monthly অথবা Buyer/Style-wise shipment ও inspection performance দেখুন। Shipment Qty-এর জন্য order form-এ Shipped Qty দিন; না দিলে Shipped status থাকলে Order Qty গণনা হবে।</p>
+<div class="dash-filters">
+<div><label for="dashMode">Dashboard View / ভিউ</label><select id="dashMode"><option value="monthly">Monthly Summary / মাসভিত্তিক</option><option value="style">Buyer + Style Wise / বায়ার ও স্টাইলভিত্তিক</option></select></div>
+<div><label for="dashMonth">Month / মাস</label><input id="dashMonth" type="month"></div>
+<div><label for="dashBuyer">Buyer / বায়ার</label><input id="dashBuyer" placeholder="All buyers"></div>
+<div><label for="dashStyle">Style No. / স্টাইল</label><input id="dashStyle" placeholder="All styles"></div>
+</div>
+<div class="actions no-print"><button id="refreshDashboard">Update Dashboard / আপডেট</button><button id="dashboardPrint" class="secondary">Print / PDF</button><button id="dashboardCsv" class="secondary">Export CSV</button></div>
+<div id="dashboardPrintArea">
+<div class="dash-kpis">
+<div class="dash-kpi"><div class="muted">Shipped Qty / শিপমেন্ট পিস</div><div class="big" id="dashShipped">0</div></div>
+<div class="dash-kpi"><div class="muted">Final Pass / ফাইনাল পাস</div><div class="big" id="dashPass">0</div><div class="muted" id="dashPassRate">Pass: 0%</div><div class="bartrack"><div class="barfill" id="dashPassBar" style="width:0%"></div></div></div>
+<div class="dash-kpi"><div class="muted">Final Fail / ফাইনাল ফেল</div><div class="big" id="dashFail">0</div><div class="muted" id="dashFailRate">Fail: 0%</div><div class="bartrack"><div class="barfill" id="dashFailBar" style="width:0%;background:#b42318"></div></div></div>
+<div class="dash-kpi"><div class="muted">Inspection Qty / মোট ইনস্পেকশন</div><div class="big" id="dashInspected">0</div></div>
+</div>
+<div id="dashboardTable"></div>
+<p class="muted">Pass % = Final Pass ÷ (Final Pass + Final Fail) × 100. Fail % একই inspected quantity-এর ভিত্তিতে গণনা করা হয়।</p>
+</div>
+</div>
+<div id="ordersView" class="hidden">
+<div class="panel"><h2 data-en="Add / Update Buyer Order" data-bn="বায়ার অর্ডার যোগ / আপডেট">বায়ার অর্ডার যোগ / আপডেট</h2>
+<form id="orderForm"><input id="docId" type="hidden"><div class="formgrid">
+<div><label for="buyer">Buyer / বায়ার *</label><input id="buyer" required placeholder="e.g. US Polo"></div>
+<div><label for="po">PO Number / PO নম্বর *</label><input id="po" required></div>
+<div><label for="style">Style No. / স্টাইল নম্বর *</label><input id="style" required></div>
+<div><label for="item">Item / পণ্যের ধরন</label><input id="item" placeholder="Polo Shirt"></div>
+<div><label for="qty">Order Qty / অর্ডার পরিমাণ *</label><input id="qty" type="number" min="1" required></div>
+<div><label for="shippedQty">Shipped Qty / শিপমেন্ট পরিমাণ</label><input id="shippedQty" type="number" min="0" value="0"></div>
+<div><label for="shipDate">Shipment Date / শিপমেন্ট তারিখ</label><input id="shipDate" type="date"></div>
+<div><label for="prod">Production Status / প্রোডাকশন স্ট্যাটাস</label><select id="prod"><option>Not Started</option><option>Cutting</option><option>Sewing</option><option>Finishing</option><option>Completed</option></select></div>
+<div><label for="quality">Quality Status / কোয়ালিটি স্ট্যাটাস</label><select id="quality"><option>Pending</option><option>Inline Pass</option><option>Final Pass</option><option>Rejected</option><option>Re-inspection</option></select></div>
+<div><label for="aql">AQL Result / AQL ফলাফল</label><select id="aql"><option>Pending</option><option>Pass</option><option>Fail</option><option>Not Applicable</option></select></div>
+<div><label for="shipment">Shipment Status / শিপমেন্ট স্ট্যাটাস</label><select id="shipment"><option>Pending</option><option>Ready</option><option>Shipped</option><option>On Hold</option></select></div>
+<div><label for="owner">Responsible Person / দায়িত্বপ্রাপ্ত</label><input id="owner"></div>
+<div><label for="remarks">Remarks / মন্তব্য</label><input id="remarks"></div>
+</div><div class="actions"><button id="saveBtn" type="submit">Save Order / অর্ডার সংরক্ষণ</button><button class="secondary" type="button" id="resetBtn">Clear / ফর্ম খালি করুন</button></div><div class="statusmsg" id="formMsg"></div></form></div>
+<div class="panel"><h2 data-en="Order Register" data-bn="অর্ডার তালিকা">অর্ডার তালিকা</h2><div class="toolbar"><input id="search" placeholder="Search buyer, PO, style... / খুঁজুন"><select id="statusFilter"><option value="">All shipment statuses / সব স্ট্যাটাস</option><option>Pending</option><option>Ready</option><option>Shipped</option><option>On Hold</option></select><button class="secondary" id="csvBtn">Export CSV</button></div><div class="tablewrap"><table><thead><tr><th>Buyer</th><th>PO / Style</th><th>Order / Shipped Qty</th><th>Production</th><th>Quality / AQL</th><th>Shipment Date</th><th>Shipment Status</th><th>Actions</th></tr></thead><tbody id="ordersBody"><tr><td colspan="8">Sign in to load orders.</td></tr></tbody></table></div></div>
+</div>
+<div id="productionView" class="panel hidden"><h2>Production Tracking / প্রোডাকশন ট্র্যাকিং</h2><p class="muted">Production status update করতে Buyer Orders ট্যাবের Edit ব্যবহার করুন। Cutting → Sewing → Finishing → Completed অনুযায়ী অগ্রগতি রাখুন।</p><div id="productionList"></div></div>
+<div id="qualityView" class="panel hidden"><h2>Quality & Inspection / কোয়ালিটি ও ইনস্পেকশন</h2><p class="muted">Inline, final inspection এবং AQL ফলাফল Buyer Orders ট্যাব থেকে আপডেট করুন।</p><div id="qualityList"></div></div>
+<div id="shipmentView" class="panel hidden"><h2>Shipment Tracking / শিপমেন্ট ট্র্যাকিং</h2><p class="muted">Shipment date, Ready / Shipped / On Hold স্ট্যাটাস আপডেট করুন।</p><div id="shipmentList"></div></div>
+<div id="reportView" class="panel hidden">
+<h2>Daily & Final Reports / দৈনিক ও ফাইনাল রিপোর্ট</h2>
+<p class="muted">প্রতিদিনের production/quality update আলাদা করে সংরক্ষণ করুন। পরে Buyer, Style, PO এবং তারিখের রেঞ্জ অনুযায়ী এক জায়গায় হিসাব দেখুন।</p>
+<div class="panel no-print" style="box-shadow:none;background:#f8fafc">
+<h2>Daily Update Entry / দৈনিক আপডেট এন্ট্রি</h2>
+<form id="dailyForm"><input id="dailyEditId" type="hidden"><div class="formgrid">
+<div><label for="dailyDate">Report Date / রিপোর্টের তারিখ *</label><input id="dailyDate" type="date" required></div>
+<div><label for="dailyBuyer">Buyer / বায়ার *</label><input id="dailyBuyer" required placeholder="Buyer name"></div>
+<div><label for="dailyStyle">Style No. / স্টাইল *</label><input id="dailyStyle" required></div>
+<div><label for="dailyPO">PO Number / PO নম্বর</label><input id="dailyPO"></div>
+<div><label for="dailyPlan">Order Qty / অর্ডার পরিমাণ</label><input id="dailyPlan" type="number" min="0" value="0"></div>
+<div><label for="dailyCut">Cutting Qty / কাটিং</label><input id="dailyCut" type="number" min="0" value="0"></div>
+<div><label for="dailySew">Sewing Qty / সুইং</label><input id="dailySew" type="number" min="0" value="0"></div>
+<div><label for="dailyFinish">Finishing Qty / ফিনিশিং</label><input id="dailyFinish" type="number" min="0" value="0"></div>
+<div><label for="dailyInline">Inline Defects / ইনলাইন ডিফেক্ট</label><input id="dailyInline" type="number" min="0" value="0"></div>
+<div><label for="dailyFinalPass">Final Pass Qty / ফাইনাল পাস</label><input id="dailyFinalPass" type="number" min="0" value="0"></div>
+<div><label for="dailyFinalFail">Final Fail Qty / ফাইনাল ফেল</label><input id="dailyFinalFail" type="number" min="0" value="0"></div>
+<div><label for="dailyOwner">Updated By / আপডেটকারী</label><input id="dailyOwner"></div>
+<div style="grid-column:1/-1"><label for="dailyRemarks">Remarks / মন্তব্য</label><textarea id="dailyRemarks"></textarea></div>
+</div><div class="actions"><button type="submit" id="dailySaveBtn">Save Daily Update / দৈনিক আপডেট সংরক্ষণ</button><button type="button" class="secondary" id="dailyReset">Clear / খালি করুন</button></div><div class="statusmsg" id="dailyMsg"></div></form>
+</div>
+<div class="panel no-print" style="box-shadow:none">
+<h2>Custom Report Filters / কাস্টম রিপোর্ট ফিল্টার</h2>
+<div class="report-filters">
+<div><label for="reportType">Report Type / রিপোর্টের ধরন</label><select id="reportType"><option value="daily">Daily Report / দৈনিক</option><option value="final">Final Summary / ফাইনাল সামারি</option></select></div>
+<div><label for="fromDate">From Date / শুরুর তারিখ</label><input id="fromDate" type="date"></div>
+<div><label for="toDate">To Date / শেষ তারিখ</label><input id="toDate" type="date"></div>
+<div><label for="filterBuyer">Buyer / বায়ার</label><input id="filterBuyer" placeholder="All buyers / সব বায়ার"></div>
+<div><label for="filterStyle">Style No. / স্টাইল</label><input id="filterStyle" placeholder="All styles / সব স্টাইল"></div>
+<div><label for="filterPO">PO Number / PO নম্বর</label><input id="filterPO" placeholder="All POs / সব PO"></div>
+</div>
+<div class="report-actions"><button id="generateCustomReport">Generate Report / রিপোর্ট তৈরি</button><button id="downloadPdf" class="secondary">Download PDF / PDF ডাউনলোড</button><button id="printReport" class="secondary">Print / প্রিন্ট</button><button id="copyReport" class="secondary">Copy Text / কপি</button><button id="exportDailyCsv" class="secondary">Export CSV / CSV</button></div>
+<p class="muted">PDF ডাউনলোড: Android print screen-এ printer নির্বাচন থেকে “Save as PDF” বেছে নিন।</p>
+</div>
+<div id="printArea"><h2 class="report-title" style="display:none">Garments Buyer Order Handling — Report</h2><div class="reportbox" id="reportBox">রিপোর্ট তৈরি করতে বাটনে চাপ দিন।</div><div id="reportTableWrap"></div></div>
+<div class="panel no-print" style="box-shadow:none"><h2>Saved Daily Updates / সংরক্ষিত দৈনিক রিপোর্ট</h2><div class="toolbar"><input id="historySearch" placeholder="Search buyer / style / PO"><button class="secondary" id="refreshHistory">Refresh / রিফ্রেশ</button></div><div class="tablewrap"><table class="report-table"><thead><tr><th>Date</th><th>Buyer</th><th>Style</th><th>PO</th><th>Cutting</th><th>Sewing</th><th>Finishing</th><th>Final Pass</th><th>Final Fail</th><th>Actions</th></tr></thead><tbody id="dailyHistoryBody"><tr><td colspan="10">Sign in to load daily updates.</td></tr></tbody></table></div></div>
+</div>
+
+</section>
+<div class="footer">Offline factory tool • Data saved in this browser / ডেটা এই ব্রাউজারে সংরক্ষিত</div>
+</main>
+<script>
+const $ = id => document.getElementById(id);
+let orders=[], dailyReports=[], currentLang='bn', activeTab='dashboard', lastReportRows=[];
+const fields=['buyer','po','style','item','qty','shippedQty','shipDate','prod','quality','aql','shipment','owner','remarks'];
+const tr=(bn,en)=>currentLang==='bn'?bn:en;
+function setMsg(id,msg,ok=false){$(id).textContent=msg;$(id).className='statusmsg '+(ok?'ok':'err')}
+const STORAGE_ORDERS='garmentsBuyerOrders_v1', STORAGE_REPORTS='garmentsDailyReports_v1';
+function saveLocalData(){try{localStorage.setItem(STORAGE_ORDERS,JSON.stringify(orders));localStorage.setItem(STORAGE_REPORTS,JSON.stringify(dailyReports));return true}catch(e){alert('Storage full or unavailable. Export CSV backup and free browser storage.');return false}}
+function loadOrders(){try{orders=JSON.parse(localStorage.getItem(STORAGE_ORDERS)||'[]');renderAll()}catch(e){orders=[];renderAll()}}
+function loadDailyReports(){try{dailyReports=JSON.parse(localStorage.getItem(STORAGE_REPORTS)||'[]').sort((a,b)=>String(b.date||'').localeCompare(String(a.date||'')));renderDailyHistory()}catch(e){dailyReports=[];renderDailyHistory()}}
+function formData(){const o={};fields.forEach(f=>o[f]=$(f).value.trim());o.qty=Number(o.qty||0);return o}
+function clearForm(){$('orderForm').reset();$('docId').value='';$('formMsg').textContent=''}
+$('resetBtn').onclick=clearForm;
+$('orderForm').onsubmit=e=>{e.preventDefault();const data=formData();const id=$('docId').value;if(id){orders=orders.map(o=>o.id===id?{...o,...data,updatedAt:new Date().toISOString()}:o);setMsg('formMsg','Order updated successfully.',true)}else{orders.unshift({id:'ord_'+Date.now()+'_'+Math.random().toString(36).slice(2,7),...data,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()});setMsg('formMsg','Order saved on this device.',true)}saveLocalData();clearForm();renderAll()};
+function editOrder(id){const o=orders.find(x=>x.id===id);if(!o)return;$('docId').value=id;fields.forEach(f=>$(f).value=o[f]??'');window.scrollTo({top:0,behavior:'smooth'})}
+function deleteOrder(id){if(!confirm('Delete this order? / অর্ডার মুছে ফেলবেন?'))return;orders=orders.filter(o=>o.id!==id);saveLocalData();renderAll()}
+function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function renderAll(){renderTable();renderStats();renderLists();renderDashboard()}
+function renderStats(){$('totalCount').textContent=orders.length;$('productionCount').textContent=orders.filter(o=>!['Not Started','Completed'].includes(o.prod)).length;$('qualityCount').textContent=orders.filter(o=>['Pending','Rejected','Re-inspection'].includes(o.quality)).length;$('readyCount').textContent=orders.filter(o=>o.shipment==='Ready').length;$('shippedCount').textContent=orders.filter(o=>o.shipment==='Shipped').length}
+function renderTable(){const q=$('search').value.toLowerCase(),st=$('statusFilter').value;const arr=orders.filter(o=>(!st||o.shipment===st)&&[o.buyer,o.po,o.style,o.item,o.owner].join(' ').toLowerCase().includes(q));$('ordersBody').innerHTML=arr.length?arr.map(o=>`<tr><td><b>${esc(o.buyer)}</b><br><span class="muted">${esc(o.item)}</span></td><td>${esc(o.po)}<br><span class="muted">${esc(o.style)}</span></td><td>${esc(o.qty)} / ${esc(o.shippedQty||0)}</td><td>${esc(o.prod)}</td><td>${esc(o.quality)}<br><span class="muted">AQL: ${esc(o.aql)}</span></td><td>${esc(o.shipDate||'-')}</td><td><span class="pill">${esc(o.shipment)}</span></td><td><button class="secondary" onclick="editOrder('${o.id}')">Edit</button> <button class="danger" onclick="deleteOrder('${o.id}')">Delete</button></td></tr>`).join(''):'<tr><td colspan="8">No matching orders / কোনো অর্ডার পাওয়া যায়নি</td></tr>'}
+function listTable(items,cols){if(!items.length)return '<p class="muted">No orders / কোনো অর্ডার নেই</p>';return '<div class="tablewrap"><table><thead><tr>'+cols.map(c=>'<th>'+c[0]+'</th>').join('')+'</tr></thead><tbody>'+items.map(o=>'<tr>'+cols.map(c=>'<td>'+esc(o[c[1]]||'-')+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>'}
+function renderLists(){$('productionList').innerHTML=listTable(orders,[['Buyer','buyer'],['PO','po'],['Style','style'],['Qty','qty'],['Production Status','prod']]);$('qualityList').innerHTML=listTable(orders,[['Buyer','buyer'],['PO','po'],['Style','style'],['Quality Status','quality'],['AQL Result','aql']]);$('shipmentList').innerHTML=listTable(orders,[['Buyer','buyer'],['PO','po'],['Style','style'],['Shipment Date','shipDate'],['Shipment Status','shipment'],['Remarks','remarks']])}
+$('search').oninput=renderTable;$('statusFilter').onchange=renderTable;
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{activeTab=b.dataset.tab;document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===b));['dashboard','orders','production','quality','shipment','report'].forEach(v=>$(v+'View').classList.toggle('hidden',v!==activeTab))});
+function renderDashboard(){
+ if(!$('dashboardTable'))return;
+ const month=$('dashMonth').value, buyer=$('dashBuyer').value.trim().toLowerCase(), style=$('dashStyle').value.trim().toLowerCase(), mode=$('dashMode').value;
+ const monthMatch=d=>!month||String(d||'').slice(0,7)===month;
+ const dReports=dailyReports.filter(r=>monthMatch(r.date)&&(!buyer||String(r.buyer||'').toLowerCase().includes(buyer))&&(!style||String(r.style||'').toLowerCase().includes(style)));
+ const dOrders=orders.filter(o=>(!month||String(o.shipDate||'').slice(0,7)===month)&&(!buyer||String(o.buyer||'').toLowerCase().includes(buyer))&&(!style||String(o.style||'').toLowerCase().includes(style)));
+ const sum=(arr,k)=>arr.reduce((n,r)=>n+Number(r[k]||0),0);
+ const shipped=dOrders.reduce((n,o)=>n+(Number(o.shippedQty||0)>0?Number(o.shippedQty):o.shipment==='Shipped'?Number(o.qty||0):0),0);
+ const pass=sum(dReports,'finalPass'), fail=sum(dReports,'finalFail'), inspected=pass+fail, passRate=inspected?Math.round(pass/inspected*1000)/10:0, failRate=inspected?Math.round(fail/inspected*1000)/10:0;
+ $('dashShipped').textContent=shipped.toLocaleString();$('dashPass').textContent=pass.toLocaleString();$('dashFail').textContent=fail.toLocaleString();$('dashInspected').textContent=inspected.toLocaleString();$('dashPassRate').textContent='Pass: '+passRate+'%';$('dashFailRate').textContent='Fail: '+failRate+'%';$('dashPassBar').style.width=passRate+'%';$('dashFailBar').style.width=failRate+'%';
+ const grouped={};
+ if(mode==='monthly'){
+  const keys=new Set([...orders.map(o=>String(o.shipDate||'').slice(0,7)).filter(Boolean),...dailyReports.map(r=>String(r.date||'').slice(0,7)).filter(Boolean)]);
+  [...keys].filter(m=>!month||m===month).sort().reverse().forEach(m=>{const oo=orders.filter(o=>String(o.shipDate||'').slice(0,7)===m&&(!buyer||String(o.buyer||'').toLowerCase().includes(buyer))&&(!style||String(o.style||'').toLowerCase().includes(style)));const rr=dailyReports.filter(r=>String(r.date||'').slice(0,7)===m&&(!buyer||String(r.buyer||'').toLowerCase().includes(buyer))&&(!style||String(r.style||'').toLowerCase().includes(style)));const p=sum(rr,'finalPass'),f=sum(rr,'finalFail'),q=p+f;grouped[m]={period:m,shipped:oo.reduce((n,o)=>n+(Number(o.shippedQty||0)>0?Number(o.shippedQty):o.shipment==='Shipped'?Number(o.qty||0):0),0),pass:p,fail:f,inspected:q,passRate:q?Math.round(p/q*1000)/10:0,failRate:q?Math.round(f/q*1000)/10:0,entries:rr.length};});
+ } else {
+  dReports.forEach(r=>{const key=[r.buyer||'',r.style||''].join(' | ');if(!grouped[key])grouped[key]={buyer:r.buyer||'',style:r.style||'',shipped:0,pass:0,fail:0,inspected:0,entries:0};const g=grouped[key];g.pass+=Number(r.finalPass||0);g.fail+=Number(r.finalFail||0);g.entries++;});
+  dOrders.forEach(o=>{const key=[o.buyer||'',o.style||''].join(' | ');if(!grouped[key])grouped[key]={buyer:o.buyer||'',style:o.style||'',shipped:0,pass:0,fail:0,inspected:0,entries:0};grouped[key].shipped+=Number(o.shippedQty||0)>0?Number(o.shippedQty):o.shipment==='Shipped'?Number(o.qty||0):0;});
+  Object.values(grouped).forEach(g=>{g.inspected=g.pass+g.fail;g.passRate=g.inspected?Math.round(g.pass/g.inspected*1000)/10:0;g.failRate=g.inspected?Math.round(g.fail/g.inspected*1000)/10:0});
+ }
+ const rows=Object.values(grouped);const cols=mode==='monthly'?[['Month','period'],['Shipped Qty','shipped'],['Final Pass','pass'],['Final Fail','fail'],['Inspected Qty','inspected'],['Pass %','passRate'],['Fail %','failRate'],['Daily Entries','entries']]:[['Buyer','buyer'],['Style','style'],['Shipped Qty','shipped'],['Final Pass','pass'],['Final Fail','fail'],['Inspected Qty','inspected'],['Pass %','passRate'],['Fail %','failRate'],['Daily Entries','entries']];
+ $('dashboardTable').innerHTML=rows.length?'<div class="tablewrap"><table><thead><tr>'+cols.map(c=>'<th>'+c[0]+'</th>').join('')+'</tr></thead><tbody>'+rows.map(r=>'<tr>'+cols.map(c=>'<td>'+esc(r[c[1]]??0)+(c[1]==='passRate'||c[1]==='failRate'?'%':'')+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>':'<p class="muted">No dashboard data for these filters / এই ফিল্টারে কোনো তথ্য নেই।';
+}
+['dashMode','dashMonth'].forEach(id=>$(id).addEventListener('change',renderDashboard));['dashBuyer','dashStyle'].forEach(id=>$(id).addEventListener('input',renderDashboard));$('refreshDashboard').onclick=renderDashboard;$('dashboardPrint').onclick=()=>window.print();$('dashboardCsv').onclick=()=>{const rows=Array.from($('dashboardTable').querySelectorAll('tr')).map(tr=>Array.from(tr.children).map(td=>'"'+td.textContent.replace(/"/g,'""')+'"').join(','));const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+rows.join('\r\n')],{type:'text/csv;charset=utf-8;'}));a.download='garments-dashboard.csv';a.click();URL.revokeObjectURL(a.href)};
+$('dashMonth').value=new Date().toISOString().slice(0,7);
+function dailyFormData(){return {date:$('dailyDate').value,buyer:$('dailyBuyer').value.trim(),style:$('dailyStyle').value.trim(),po:$('dailyPO').value.trim(),plan:Number($('dailyPlan').value||0),cut:Number($('dailyCut').value||0),sew:Number($('dailySew').value||0),finish:Number($('dailyFinish').value||0),inlineDefects:Number($('dailyInline').value||0),finalPass:Number($('dailyFinalPass').value||0),finalFail:Number($('dailyFinalFail').value||0),owner:$('dailyOwner').value.trim(),remarks:$('dailyRemarks').value.trim()}}
+$('dailyDate').value=new Date().toISOString().slice(0,10);
+$('dailyReset').onclick=resetDailyForm;
+$('dailyForm').onsubmit=e=>{e.preventDefault();const data=dailyFormData();const editId=$('dailyEditId').value;if(editId){dailyReports=dailyReports.map(r=>r.id===editId?{...r,...data,updatedAt:new Date().toISOString()}:r);setMsg('dailyMsg','Daily report updated / দৈনিক রিপোর্ট আপডেট হয়েছে',true)}else{dailyReports.unshift({id:'rep_'+Date.now()+'_'+Math.random().toString(36).slice(2,7),...data,createdAt:new Date().toISOString()});setMsg('dailyMsg','Daily update saved on this device / ডিভাইসে দৈনিক আপডেট সংরক্ষিত হয়েছে',true)}saveLocalData();resetDailyForm();loadDailyReports();generateCustomReport()};
+function resetDailyForm(){$('dailyForm').reset();$('dailyEditId').value='';$('dailyDate').value=new Date().toISOString().slice(0,10);$('dailySaveBtn').textContent='Save Daily Update / দৈনিক আপডেট সংরক্ষণ';$('dailyMsg').textContent=''}
+function editDailyReport(id){const r=dailyReports.find(x=>x.id===id);if(!r)return;$('dailyEditId').value=id;const map={date:'dailyDate',buyer:'dailyBuyer',style:'dailyStyle',po:'dailyPO',plan:'dailyPlan',cut:'dailyCut',sew:'dailySew',finish:'dailyFinish',inlineDefects:'dailyInline',finalPass:'dailyFinalPass',finalFail:'dailyFinalFail',owner:'dailyOwner',remarks:'dailyRemarks'};Object.entries(map).forEach(([k,v])=>$(v).value=r[k]??(k==='date'?'':0));$('dailySaveBtn').textContent='Update Daily Report / রিপোর্ট আপডেট';setMsg('dailyMsg','Editing saved report. Save to update it. / পুরোনো রিপোর্ট সম্পাদনা হচ্ছে। আপডেট করতে Save চাপুন।',true);$('dailyForm').scrollIntoView({behavior:'smooth',block:'start'})}
+function deleteDailyReport(id){if(!confirm('Permanently delete this daily report? / এই দৈনিক রিপোর্ট স্থায়ীভাবে মুছে ফেলবেন?'))return;dailyReports=dailyReports.filter(r=>r.id!==id);saveLocalData();setMsg('dailyMsg','Daily report deleted / রিপোর্ট মুছে ফেলা হয়েছে',true);loadDailyReports();generateCustomReport()}
+function renderDailyHistory(){renderDashboard();const q=$('historySearch').value.toLowerCase();const rows=dailyReports.filter(r=>[r.buyer,r.style,r.po,r.date].join(' ').toLowerCase().includes(q));$('dailyHistoryBody').innerHTML=rows.length?rows.map(r=>`<tr><td>${esc(r.date)}</td><td>${esc(r.buyer)}</td><td>${esc(r.style)}</td><td>${esc(r.po)}</td><td>${esc(r.cut||0)}</td><td>${esc(r.sew||0)}</td><td>${esc(r.finish||0)}</td><td>${esc(r.finalPass||0)}</td><td>${esc(r.finalFail||0)}</td><td><button class="secondary" onclick="editDailyReport('${r.id}')">Edit</button> <button class="danger" onclick="deleteDailyReport('${r.id}')">Delete</button></td></tr>`).join(''):'<tr><td colspan="10">No daily updates / কোনো রিপোর্ট নেই</td></tr>'}
+$('historySearch').oninput=renderDailyHistory;$('refreshHistory').onclick=loadDailyReports;
+function filteredDailyReports(){const from=$('fromDate').value,to=$('toDate').value,buyer=$('filterBuyer').value.trim().toLowerCase(),style=$('filterStyle').value.trim().toLowerCase(),po=$('filterPO').value.trim().toLowerCase();return dailyReports.filter(r=>(!from||r.date>=from)&&(!to||r.date<=to)&&(!buyer||String(r.buyer||'').toLowerCase().includes(buyer))&&(!style||String(r.style||'').toLowerCase().includes(style))&&(!po||String(r.po||'').toLowerCase().includes(po)))}
+function generateCustomReport(){
+ const rows=filteredDailyReports();lastReportRows=rows;const type=$('reportType').value;const grouped={};
+ rows.forEach(r=>{const key=[r.buyer||'',r.style||''].join(' | ');if(!grouped[key])grouped[key]={buyer:r.buyer||'',style:r.style||'',pos:[],days:0,poPlans:{},cut:0,sew:0,finish:0,inlineDefects:0,finalPass:0,finalFail:0};const g=grouped[key];const po=String(r.po||'').trim()||'(No PO)';if(!g.pos.includes(po))g.pos.push(po);g.days++;const plan=Number(r.plan||0);g.poPlans[po]=Math.max(Number(g.poPlans[po]||0),plan);['cut','sew','finish','inlineDefects','finalPass','finalFail'].forEach(k=>g[k]+=Number(r[k]||0));});
+ const groups=Object.values(grouped).map(g=>{g.plan=Object.values(g.poPlans).reduce((a,b)=>a+b,0);g.balance=Math.max(0,g.plan-g.finish);g.cutBalance=Math.max(0,g.plan-g.cut);g.sewBalance=Math.max(0,g.plan-g.sew);g.inspected=g.finalPass+g.finalFail;g.passRate=g.inspected?Math.round(g.finalPass/g.inspected*1000)/10:0;delete g.poPlans;return g}).sort((a,b)=>(a.buyer+a.style).localeCompare(b.buyer+b.style));
+ const sum=k=>groups.reduce((n,r)=>n+Number(r[k]||0),0);const from=$('fromDate').value||'All dates',to=$('toDate').value||'All dates';const title=type==='final'?'FINAL STYLE-WISE REPORT / স্টাইলভিত্তিক ফাইনাল রিপোর্ট':'DAILY PRODUCTION REPORT / দৈনিক প্রোডাকশন রিপোর্ট';
+ $('reportBox').textContent=[title,`Period / সময়কাল: ${from} — ${to}`,`Filters / ফিল্টার: Buyer=${$('filterBuyer').value||'All'}, Style=${$('filterStyle').value||'All'}, PO=${$('filterPO').value||'All'}`,`Daily entries / দৈনিক এন্ট্রি: ${rows.length}`,`Order Qty / মোট অর্ডার: ${sum('plan')}`,`Cutting / মোট কাটিং: ${sum('cut')}`,`Sewing / মোট সুইং: ${sum('sew')}`,`Finishing / মোট ফিনিশিং: ${sum('finish')}`,`Balance Qty (Order - Finishing) / বাকি: ${sum('balance')}`,`Final Pass / ফাইনাল পাস: ${sum('finalPass')}`,`Final Fail / ফাইনাল ফেল: ${sum('finalFail')}`,`Inline Defects / ইনলাইন ডিফেক্ট: ${sum('inlineDefects')}`].join('\n');
+ const cols=[['Buyer','buyer'],['Style','style'],['PO(s)','pos'],['Days','days'],['Order Qty','plan'],['Cutting','cut'],['Cut Balance','cutBalance'],['Sewing','sew'],['Sew Balance','sewBalance'],['Finishing','finish'],['Balance Qty','balance'],['Final Pass','finalPass'],['Final Fail','finalFail'],['Pass %','passRate']];
+ $('reportTableWrap').innerHTML=groups.length?'<div class="tablewrap"><table class="report-table"><thead><tr>'+cols.map(c=>'<th>'+c[0]+'</th>').join('')+'</tr></thead><tbody>'+groups.map(g=>'<tr>'+cols.map(c=>'<td>'+esc(Array.isArray(g[c[1]])?g[c[1]].join(', '):g[c[1]])+'</td>').join('')+'</tr>').join('')+'<tr><th colspan="4">TOTAL</th>'+cols.slice(4).map(c=>'<th>'+esc(c[1]==='passRate'?(sum('finalPass')+sum('finalFail')?Math.round(sum('finalPass')/(sum('finalPass')+sum('finalFail'))*1000)/10:0):sum(c[1]))+'</th>').join('')+'</tr></tbody></table></div>':'<p>No data matches these filters / এই ফিল্টারে কোনো তথ্য নেই।';
+}
+$('generateCustomReport').onclick=generateCustomReport;
+function printReport(){generateCustomReport();window.print()}
+$('downloadPdf').onclick=printReport;$('printReport').onclick=printReport;
+$('exportDailyCsv').onclick=()=>{const rows=filteredDailyReports();const keys=['date','buyer','style','po','plan','cut','sew','finish','inlineDefects','finalPass','finalFail','owner','remarks'];const csv=[keys.join(','),...rows.map(o=>keys.map(k=>'"'+String(o[k]??'').replace(/"/g,'""')+'"').join(','))].join('\r\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'}));a.download='garments-daily-reports.csv';a.click();URL.revokeObjectURL(a.href)};
+$('copyReport').onclick=async()=>{try{await navigator.clipboard.writeText($('reportBox').textContent);alert('Report copied / রিপোর্ট কপি হয়েছে')}catch(e){alert('Copy not available on this browser. Please select and copy the report text.')}};
+$('csvBtn').onclick=()=>{const keys=['buyer','po','style','item','qty','shippedQty','shipDate','prod','quality','aql','shipment','owner','remarks'];const csv=[keys.join(','),...orders.map(o=>keys.map(k=>'"'+String(o[k]??'').replace(/"/g,'""')+'"').join(','))].join('\r\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'}));a.download='garments-orders.csv';a.click();URL.revokeObjectURL(a.href)};
+$('langBtn').onclick=()=>{currentLang=currentLang==='bn'?'en':'bn';document.documentElement.lang=currentLang;document.querySelectorAll('[data-bn]').forEach(el=>el.textContent=el.dataset[currentLang]);$('langBtn').textContent=currentLang==='bn'?'বাংলা / English':'English / বাংলা';$('appSub').textContent=currentLang==='bn'?'বায়ার অর্ডার • প্রোডাকশন • কোয়ালিটি • শিপমেন্ট':'Buyer Order • Production • Quality • Shipment'};
+$('appSection').classList.remove('hidden');loadOrders();loadDailyReports();
+</script>
+</body>
+</html>
